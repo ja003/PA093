@@ -27,12 +27,16 @@ void setup() {
   points.add(new Point(x-c,x+c));
   points.add(new Point(x+c,x+c));*/
   
+  points.add(new Point(2*x,x/2));
+  //points.add(new Point(2*x,4*x));
   points.add(new Point(x,x));
-  points.add(new Point(x,3*x));
+  //points.add(new Point(x,3*x));
   points.add(new Point(2*x,3*x));
   points.add(new Point(3*x,3*x));
   points.add(new Point(3*x,x));
   points.add(new Point(2*x,x));
+  
+  points.add(new Point(112,228));
   
   /*points.add(new Point(2*x,x+x/2));
   points.add(new Point(2.5*x,2*x));
@@ -133,7 +137,7 @@ void keyPressed(){
    pointsHull = getGrahamScan(points);
  }
  if(key == 'd'){
-   delaunayTriangulationFlag = true;
+   delaunayTriangulationFlag = !delaunayTriangulationFlag;
    triangulation = false;
    print("delaunayTriangulation\n");
    getDelaunayTriangulation(points);
@@ -153,7 +157,7 @@ void keyPressed(){
  if(key == 'v'){
    print("voronoi\n");
    CreateVoronoiDiagramFrom(getDelaunayTriangulation(points));
-   drawVoronoiDiagram = true;
+   drawVoronoiDiagram = !drawVoronoiDiagram;
  }
  
 }

@@ -6,15 +6,15 @@ ArrayList<Edge> getDelaunayTriangulation(ArrayList<Point> points) {
   if(points.size() < 3)
     return delaunayTriangulation;
   AEL = new ArrayList<Edge>();
-  
+  delaunayTriangulation = new ArrayList<Edge>(); 
   Point p1 = points.get(0);
   Point p2 = getClosestPoint(points, p1);
     
   Edge e = new Edge(p1, p2);
-  Point p = getDelaunayClosestPoint(points, e);
+  Point p = getDelaunayClosestPoint(points, e, Side.left);
   if (p == null){
     e.swapOrientation();
-    p = getDelaunayClosestPoint(points, e);
+    p = getDelaunayClosestPoint(points, e, Side.left);
   }
   Edge e2 = new Edge(p2, p);
   Edge e3 = new Edge(p, p1);
@@ -23,28 +23,42 @@ ArrayList<Edge> getDelaunayTriangulation(ArrayList<Point> points) {
   AEL.add(e3);
   int i = -1;
   while(!AEL.isEmpty() && i < 666){
-    i++; 
+    i++;     
     e = AEL.get(0);     //<>//
-    e.swapOrientation();    
-    p = getDelaunayClosestPoint(points,e);
+    e.swapOrientation();
+    p = getDelaunayClosestPoint(points,e, Side.left);
+    
+    if(p != null && 
+      (containsEdge(delaunayTriangulation,new Edge(p,e.p0)) ||
+      containsEdge(delaunayTriangulation,new Edge(p,e.p1))))
+    {
+      e.swapOrientation();
+      p = getDelaunayClosestPoint(points,e, Side.left);
+    }
+    
+    
     if(p != null){
        p1 = e.p0;
        p2 = e.p1;
        e2 = new Edge(p2,p);
        if(!containsEdge(AEL,e2) && !containsEdge(delaunayTriangulation,e2)){
-         AEL.add(e2);        
+         if(!intersectsEdges(AEL,e2)){
+           AEL.add(e2);   
+         }
        }
        
        e3 = new Edge(p,p1);       
        if(!containsEdge(AEL,e3) && !containsEdge(delaunayTriangulation,e3)){
-         AEL.add(e3);         
+         if(!intersectsEdges(AEL,e3)){
+           AEL.add(e3); 
+         }
        }
     }
     delaunayTriangulation.add(e);
     AEL.remove(e);
   }
   
-  return delaunayTriangulation;
+    return delaunayTriangulation;
 }
 
 boolean containsEdge(ArrayList<Edge> edges, Edge edge){
@@ -57,6 +71,14 @@ boolean containsEdge(ArrayList<Edge> edges, Edge edge){
 boolean isEdgeIn(ArrayList<Edge> edges, Edge edge){
   for (int i = 0; i<edges.size(); i++) {
       if(edge.equals(edges.get(i)))
+        return true;
+  }
+  return false;
+}
+
+boolean intersectsEdges(ArrayList<Edge> edges, Edge edge){
+  for (int i = 0; i<edges.size(); i++) {
+      if(edge.hasIntersection(edges.get(i)))
         return true;
   }
   return false;
@@ -76,16 +98,21 @@ Point getClosestPoint(ArrayList<Point> points, Point pointFrom) {
   return points.get(index);
 }
 
-Point getDelaunayClosestPoint(ArrayList<Point> points, Edge edge) {
+Point getDelaunayClosestPoint(ArrayList<Point> points, Edge edge, Side side) {
+  int sideMultiplier = -1;
+  if(side == Side.right)
+    sideMultiplier *= -1;
   float dist = 6666;
   int index = -1;
   for (int i = 0; i<points.size(); i++) {
     float d = getDelaunayDistance(edge, points.get(i));
-    if (d != 0 && d < dist && getCrossProduct(edge.p0, edge.p1, points.get(i))>0) {
+    if (d != 0 && d < dist && 
+    sideMultiplier * getCrossProduct(edge.p0, edge.p1, points.get(i)) > 0) {
       dist = d; 
       index = i;
     }
   }
+  
   if (index != -1)
   return points.get(index);
   else

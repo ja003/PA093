@@ -28,7 +28,7 @@ class Point{
     return new Point(x,y,side);
   }
   
- boolean equals(Point p){
+  boolean equals(Point p){
     return p.x == x && p.y==y;
   }
   
@@ -46,6 +46,42 @@ class Edge{
   this.p1 = p1;
  }
  
+  //actual intersection
+  boolean hasIntersection(Edge edge)
+  {
+    float i_x;
+    float i_y;
+    float p0_x = p0.x;
+    float p0_y = p0.y;
+    float p1_x = p1.x;
+    float p1_y = p1.y;
+    
+    float p2_x = edge.p0.x;
+    float p2_y = edge.p0.y;
+    float p3_x = edge.p1.x;
+    float p3_y = edge.p1.y;
+  
+    float s1_x, s1_y, s2_x, s2_y;
+    s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
+    s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
+
+    float s, t;
+    s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
+    t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+    {
+        i_x = p0_x + (t * s1_x);
+        i_y = p0_y + (t * s1_y);
+        Point intersection = new Point(i_x, i_y);
+        if(intersection.equals(p0) || intersection.equals(p1))
+          return false;        
+        return true;
+    }
+
+    return false; // No collision
+}
+ 
  Edge clone(){
   return new Edge(p0.clone(),p1.clone()); 
  }
@@ -55,6 +91,7 @@ class Edge{
     p0.equals(e.p1) || p1.equals(e.p1)); 
  }
  
+ //intersection only at edges
  Point getIntersection(Edge e){
    if(p0.equals(e.p0))
      return p0;
@@ -77,8 +114,11 @@ class Edge{
  }
  
  boolean equals(Edge e){
-    return e.equals(this, false);
- }
+   //return e.equals(this, false);
+
+   //return equals(e,true); 
+   return p0.equals(e.p0) && p1.equals(e.p1);
+  }
  
  String toString(){
    return "["+p0+","+p1+"]"; 

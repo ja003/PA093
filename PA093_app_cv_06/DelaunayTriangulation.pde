@@ -25,14 +25,26 @@ void getDelaunayTriangulation(ArrayList<Point> points) {
   AEL.add(e2);
   AEL.add(e3);
   int i = -1;
+  print("\n----------------------\n" ); 
   while(!AEL.isEmpty() && i < 666){
+    print("\n----------------------\n" ); 
     i++; 
     print("\n"+i+" ");
+    print("\nDELAUNAY: \n");
+    for(int j =0;j<delaunayTriangulation.size();j++){
+      print(delaunayTriangulation.get(j)+",\n");
+    }
+    print("\nAEL: \n");
+    for(int j =0;j<AEL.size();j++){
+      print(AEL.get(j)+",\n");
+    }
+    print("\n-\n");
+    
     e = AEL.get(0);     //<>//
     e.swapOrientation();
     print(e);
     p = getDelaunayClosestPoint(points,e, Side.left);
-    print(" closest: " + p);
+    print("\n closest: " + p);
     
     if(p != null && 
       (containsEdge(delaunayTriangulation,new Edge(p,e.p0)) ||
@@ -49,21 +61,33 @@ void getDelaunayTriangulation(ArrayList<Point> points) {
      e.swapOrientation();
      p = getDelaunayClosestPoint(points,e, Side.left);
     }*/
+    
     if(p != null){
        p1 = e.p0;
        p2 = e.p1;
        e2 = new Edge(p2,p);
        if(!containsEdge(AEL,e2) && !containsEdge(delaunayTriangulation,e2)){
-         AEL.add(e2);        
+         if(!intersectsEdges(AEL,e2)){
+           AEL.add(e2);   
+           print("\nAEL add " + e2);
+         }else{
+           print("\n intersects " + e2);
+         }
        }
        
        e3 = new Edge(p,p1);       
        if(!containsEdge(AEL,e3) && !containsEdge(delaunayTriangulation,e3)){
-         AEL.add(e3);         
+         if(!intersectsEdges(AEL,e3)){
+           AEL.add(e3); 
+           print("\nAEL add " + e3);
+         }else{
+           print("\n intersects " + e3);
+         }
        }
     }
     delaunayTriangulation.add(e);
     AEL.remove(e);
+    print("\nremove " + e + "\n");
   }
 }
 
@@ -77,6 +101,14 @@ boolean containsEdge(ArrayList<Edge> edges, Edge edge){
 boolean isEdgeIn(ArrayList<Edge> edges, Edge edge){
   for (int i = 0; i<edges.size(); i++) {
       if(edge.equals(edges.get(i)))
+        return true;
+  }
+  return false;
+}
+
+boolean intersectsEdges(ArrayList<Edge> edges, Edge edge){
+  for (int i = 0; i<edges.size(); i++) {
+      if(edge.intersects(edges.get(i)))
         return true;
   }
   return false;
