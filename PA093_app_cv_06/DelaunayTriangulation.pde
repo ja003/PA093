@@ -8,13 +8,17 @@ void getDelaunayTriangulation(ArrayList<Point> points) {
   delaunayTriangulation = new ArrayList<Edge>(); 
   Point p1 = points.get(0);
   Point p2 = getClosestPoint(points, p1);
+  print(p1);
+  print(p2);
     
   Edge e = new Edge(p1, p2);
-  Point p = getDelaunayClosestPoint(points, e);
+  Point p = getDelaunayClosestPoint(points, e, Side.left);
   if (p == null){
+    print("swap");
     e.swapOrientation();
-    p = getDelaunayClosestPoint(points, e);
+    p = getDelaunayClosestPoint(points, e, Side.left);
   }
+  print(p);
   Edge e2 = new Edge(p2, p);
   Edge e3 = new Edge(p, p1);
   AEL.add(e);
@@ -23,9 +27,28 @@ void getDelaunayTriangulation(ArrayList<Point> points) {
   int i = -1;
   while(!AEL.isEmpty() && i < 666){
     i++; 
+    print("\n"+i+" ");
     e = AEL.get(0);     //<>//
-    e.swapOrientation();    
-    p = getDelaunayClosestPoint(points,e);
+    e.swapOrientation();
+    print(e);
+    p = getDelaunayClosestPoint(points,e, Side.left);
+    print(" closest: " + p);
+    
+    if(p != null && 
+      (containsEdge(delaunayTriangulation,new Edge(p,e.p0)) ||
+      containsEdge(delaunayTriangulation,new Edge(p,e.p1))))
+    {
+      print("\n SWAP" + e); 
+      e.swapOrientation();
+      p = getDelaunayClosestPoint(points,e, Side.left);
+      print(" closest: " + p);
+    }
+    
+    /*if(p == null){
+     print("  NULL  "); 
+     e.swapOrientation();
+     p = getDelaunayClosestPoint(points,e, Side.left);
+    }*/
     if(p != null){
        p1 = e.p0;
        p2 = e.p1;
@@ -73,16 +96,35 @@ Point getClosestPoint(ArrayList<Point> points, Point pointFrom) {
   return points.get(index);
 }
 
-Point getDelaunayClosestPoint(ArrayList<Point> points, Edge edge) {
+Point getDelaunayClosestPoint(ArrayList<Point> points, Edge edge, Side side) {
+  print("\n\nclosest from "+points.size() + " to "+ edge+"\n");
+  int sideMultiplier = -1;
+  if(side == Side.right)
+    sideMultiplier *= -1;
   float dist = 6666;
   int index = -1;
   for (int i = 0; i<points.size(); i++) {
     float d = getDelaunayDistance(edge, points.get(i));
-    if (d != 0 && d < dist && getCrossProduct(edge.p0, edge.p1, points.get(i))>0) {
+    print("\n"+points.get(i) + " : " + d);
+    if (d != 0 && d < dist && 
+    sideMultiplier * getCrossProduct(edge.p0, edge.p1, points.get(i)) > 0) {
       dist = d; 
       index = i;
     }
   }
+  //nic jsme nenašli => zkusím druhou stranu
+  /*if (index == -1){
+    sideMultiplier *= -1;
+    for (int i = 0; i<points.size(); i++) {
+      float d = getDelaunayDistance(edge, points.get(i));
+      if (d != 0 && d < dist && 
+      sideMultiplier * getCrossProduct(edge.p0, edge.p1, points.get(i)) < 0) {
+        dist = d; 
+        index = i;
+      }
+    }    
+  }*/
+  
   if (index != -1)
   return points.get(index);
   else
