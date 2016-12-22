@@ -24,7 +24,7 @@ ArrayList<Edge> getDelaunayTriangulation(ArrayList<Point> points) {
   int i = -1;
   while(!AEL.isEmpty() && i < 666){
     i++;     
-    e = AEL.get(0);     //<>//
+    e = AEL.get(0);    
     e.swapOrientation();
     p = getDelaunayClosestPoint(points,e, Side.left);
     

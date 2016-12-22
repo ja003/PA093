@@ -194,18 +194,47 @@ class Triangle{
  }
  
  boolean isNeighbour(Triangle t){
+   
    Edge e0 = new Edge(p0,p1);
    Edge e1 = new Edge(p1,p2);
    Edge e2 = new Edge(p2,p0);
    
    Edge t_e0 = new Edge(t.p0,t.p1);
    Edge t_e1 = new Edge(t.p1,t.p2);
-   Edge t_e2 = new Edge(t.p2,t.p0);
+   Edge t_e2 = new Edge(t.p2,t.p0); //<>//
    
-   return 
-     (e0.intersects(t_e0) ||e0.intersects(t_e1) ||e0.intersects(t_e2))||
-     (e1.intersects(t_e0) ||e1.intersects(t_e1) ||e1.intersects(t_e2))||
-     (e2.intersects(t_e0) ||e2.intersects(t_e1) ||e2.intersects(t_e2));  
+   Point y0 = e0.getIntersection(t_e0);
+   //print("\n"+e0 + " int " + t_e0 + " : " + y0);
+   Point y1 = e0.getIntersection(t_e1);
+   //print("\n"+e0 + " int " + t_e0 + " : " + y1);
+   Point y2 = e0.getIntersection(t_e2);
+   //print("\n"+e0 + " int " + t_e0 + " : " + y2);
+   Point y3 = e1.getIntersection(t_e0);
+   //print("\n"+e1 + " int " + t_e1 + " : " + y3);
+   Point y4 = e1.getIntersection(t_e1);
+   //print("\n"+e1 + " int " + t_e1 + " : " + y4);
+   Point y5 = e1.getIntersection(t_e2);
+   //print("\n"+e1 + " int " + t_e1 + " : " + y5);
+   Point y6 = e2.getIntersection(t_e0);
+   //print("\n"+e2 + " int " + t_e2 + " : " + y6);
+   Point y7 = e2.getIntersection(t_e1);
+   //print("\n"+e2 + " int " + t_e2 + " : " + y7);
+   Point y8 = e2.getIntersection(t_e2);
+   //print("\n"+e2 + " int " + t_e2 + " : " + y8);
+   
+   ArrayList<Point> ints = new ArrayList<Point>(); 
+   if(y0 != null){ints.add(y0); }
+   if(!ints.contains(y1) && y1 != null){ ints.add(y1);}
+   if(!ints.contains(y2) && y2 != null){ ints.add(y2);}
+   if(!ints.contains(y3) && y3 != null){ ints.add(y3);}
+   if(!ints.contains(y4) && y4 != null){ ints.add(y4);}
+   if(!ints.contains(y5) && y5 != null){ ints.add(y5);}
+   if(!ints.contains(y6) && y6 != null){ ints.add(y6);}
+   if(!ints.contains(y7) && y7 != null){ ints.add(y7);}
+   if(!ints.contains(y8) && y8 != null){ ints.add(y8);}
+
+   //print("\nINT:"+ints.size());
+   return ints.size() >=2;
  }
  
  String toString(){
