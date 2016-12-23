@@ -16,6 +16,28 @@ class Point{
    this.side = side;
   }
   
+  
+  float sign (Point p1, Point p2, Point p3)
+  {
+      return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
+  }
+  
+  boolean isInTriangle(Triangle t)
+  {
+    Point v1 = t.p0;
+    Point v2 = t.p1;
+    Point v3 = t.p2;
+    boolean b1, b2, b3;
+
+    b1 = sign(this, v1, v2) < 0.0f;
+    b2 = sign(this, v2, v3) < 0.0f;
+    b3 = sign(this, v3, v1) < 0.0f;
+    
+    print("\nP :" + this +" in " +t+" = " + ((b1 == b2) && (b2 == b3)));
+    
+    return ((b1 == b2) && (b2 == b3));
+  }
+  
   String toString(){
    return "["+x+","+y+"]"; 
   }
@@ -46,40 +68,45 @@ class Edge{
   this.p1 = p1;
  }
  
-  //actual intersection
-  boolean hasIntersection(Edge edge)
-  {
-    float i_x;
-    float i_y;
-    float p0_x = p0.x;
-    float p0_y = p0.y;
-    float p1_x = p1.x;
-    float p1_y = p1.y;
-    
-    float p2_x = edge.p0.x;
-    float p2_y = edge.p0.y;
-    float p3_x = edge.p1.x;
-    float p3_y = edge.p1.y;
+Point getCenter(){
+  return new Point((p0.x + p1.x)/2, (p0.y + p1.y)/2); 
+}
+//actual intersection
+boolean hasIntersection(Edge edge)
+{
+  float i_x;
+  float i_y;
+  float p0_x = p0.x;
+  float p0_y = p0.y;
+  float p1_x = p1.x;
+  float p1_y = p1.y;
   
-    float s1_x, s1_y, s2_x, s2_y;
-    s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
-    s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
+  float p2_x = edge.p0.x;
+  float p2_y = edge.p0.y;
+  float p3_x = edge.p1.x;
+  float p3_y = edge.p1.y;
 
-    float s, t;
-    s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
-    t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
+  float s1_x, s1_y, s2_x, s2_y;
+  s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
+  s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
 
-    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
-    {
-        i_x = p0_x + (t * s1_x);
-        i_y = p0_y + (t * s1_y);
-        Point intersection = new Point(i_x, i_y);
-        if(intersection.equals(p0) || intersection.equals(p1))
-          return false;        
-        return true;
-    }
+  float s, t;
+  s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
+  t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
 
-    return false; // No collision
+  if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+  {
+      i_x = p0_x + (t * s1_x);
+      i_y = p0_y + (t * s1_y);
+      Point intersection = new Point(i_x, i_y);
+      print(" Int = " + intersection); 
+      if(intersection.equals(p0) || intersection.equals(p1))
+        return false;        
+      return true;
+  }
+  print(" no col");
+
+  return false; // No collision
 }
  
  Edge clone(){
@@ -167,6 +194,7 @@ class Triangle{
  Point circumCenter;
  
  ArrayList<Triangle> neigbours;//max 3
+ ArrayList<Edge> boarder;//edges at the boarder of triangulation, max 2
  
   boolean equals(Object other){
     if (other == null) return false;
@@ -190,10 +218,18 @@ class Triangle{
     e1 = new Edge(p1,p2);
     e2 = new Edge(p2,p0);
     neigbours = new ArrayList<Triangle>();
+    boarder = new ArrayList<Edge>();
     circumCenter = getCenterOfCircumCircle(p0,p1,p2);
  }
  
+ boolean isEdgeIn(Edge e){
+  //print("\nisEdgeIn: " + this + " - " + e + " = " + (e.equals(e0, true) || e.equals(e1, true) || e.equals(e2, true)));
+  return e.equals(e0, true) || e.equals(e1, true) || e.equals(e2, true); 
+ }
+ 
  boolean isNeighbour(Triangle t){
+   if(equals(t))
+     return false;
    
    Edge e0 = new Edge(p0,p1);
    Edge e1 = new Edge(p1,p2);

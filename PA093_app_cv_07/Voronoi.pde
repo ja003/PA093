@@ -4,7 +4,7 @@ ArrayList<Edge> voronoiDiagram;
 public void CreateVoronoiDiagramFrom(ArrayList<Edge> delaunayTriangulation){
   voronoiDiagram = new ArrayList<Edge>();
   triangles = new ArrayList<Triangle>();
-  if(delaunayTriangulation.size() < 3)
+  if(delaunayTriangulation.size() < 2)
     return;
     
   //print("DEL:");
@@ -15,24 +15,90 @@ public void CreateVoronoiDiagramFrom(ArrayList<Edge> delaunayTriangulation){
   
   computeTriangles(delaunayTriangulation);
   evaluateNeighbouringTriangles(triangles);
+  evaluateBoarderingTriangles(triangles);
   //ArrayList<Point> centers = getCircumCenters(triangles);
   
   for(int i = 0;i< triangles.size();i++){
     Triangle t = triangles.get(i);
-    for(int j = 0;j < t.neigbours.size();j++){
-      voronoiDiagram.add(new Edge(t.circumCenter, t.neigbours.get(j).circumCenter));
+    if(t.neigbours.size() > 0){
+      for(int j = 0;j < t.neigbours.size();j++){
+        voronoiDiagram.add(new Edge(t.circumCenter, t.neigbours.get(j).circumCenter));
+        if(t.boarder.size() > 0){
+          for(int k = 0; k< t.boarder.size();k++){
+           voronoiDiagram.add(getRay(t.circumCenter,t.boarder.get(k), t));  
+          }
+        }
+      }
+    }else{
+      if(t.boarder.size() > 0){
+          for(int k = 0; k< t.boarder.size();k++){
+           voronoiDiagram.add(getRay(t.circumCenter,t.boarder.get(k), t));  
+          }
+      }
     }
-  }
-  
+  }  
 }
 
-/*ArrayList<Point> getCircumCenters(ArrayList<Triangle> triangles){
-  ArrayList<Point> centers = new ArrayList<Point>();
-  for(int i = 0;i< triangles.size();i++){
-    centers.add(getCenterOfCircumCircle(triangles.get(i)));
+//polopřímka
+Edge getRay(Point from, Edge toEdge, Triangle t){
+  Point to = toEdge.getCenter();
+  Point dir;
+  if(from.equals(to)){
+    Point p = to;
+    if(to.equals(t.e0.getCenter())){
+      if(t.e1.p0.equals(t.e0.p0)){
+       p = t.e2.p1;
+      }else{
+        p = t.e2.p0;
+      }        
+    }
+    else if(to.equals(t.e1.getCenter())){
+      if(t.e2.p0.equals(t.e1.p0)){
+       p = t.e0.p1;
+      }else{
+        p = t.e0.p0;
+      }        
+    }
+    else if(to.equals(t.e2.getCenter())){
+      //print("?3?");
+      if(t.e0.p0.equals(t.e2.p0)){
+       p = t.e1.p1;
+      }else{
+        p = t.e1.p0;
+      }        
+    }
+    dir = new Point(to.x - p.x, to.y - p.y);  
   }
-  return centers;
-}*/
+  else{
+    Point opositePoint = to;
+    if(toEdge.equals(t.e0)){
+     if(toEdge.p0.equals(t.e1.p0))
+       opositePoint = t.e2.p1;
+     else
+       opositePoint = t.e2.p0;
+    }
+    if(toEdge.equals(t.e1)){
+     if(toEdge.p0.equals(t.e2.p0))
+       opositePoint = t.e0.p1;
+     else
+       opositePoint = t.e0.p0;
+    }
+    if(toEdge.equals(t.e2)){
+     if(toEdge.p0.equals(t.e1.p0))
+       opositePoint = t.e1.p1;
+     else
+       opositePoint = t.e1.p0;
+    }
+    if(opositePoint.distanceTo(to) > opositePoint.distanceTo(from))
+     dir = new Point(to.x - from.x, to.y - from.y); 
+    else
+     dir = new Point(from.x - to.x, from.y - to.y);   
+  }
+  
+  
+  Point infPoint = new Point(from.x + 666*dir.x, from.y + 666*dir.y);
+  return new Edge (from, infPoint);  
+}
 
 void computeTriangles(ArrayList<Edge> edges){
    for(int i = 0;i< edges.size();i++){
@@ -98,11 +164,7 @@ void computeTriangles(ArrayList<Edge> edges){
    }
 }
 
-void evaluateNeighbouringTriangles(ArrayList<Triangle> triangles){
-  /*Triangle t1 = new Triangle(new Point(200,100),new Point(100,100),new Point(100,200));
-  Triangle t2 = new Triangle(new Point(0,0),new Point(100,0),new Point(100,100));
-  t1.isNeighbour(t2);*/
-  
+void evaluateNeighbouringTriangles(ArrayList<Triangle> triangles){  
   for(int i = 0;i< triangles.size();i++){
     Triangle t = triangles.get(i);
     for(int j = 0;j< triangles.size();j++){
@@ -110,6 +172,32 @@ void evaluateNeighbouringTriangles(ArrayList<Triangle> triangles){
         t.neigbours.add(triangles.get(j));
       }
     }    
+  }
+}
+
+void evaluateBoarderingTriangles(ArrayList<Triangle> triangles){  
+  for(int i = 0;i< triangles.size();i++){
+    Triangle t = triangles.get(i);
+    if(t.neigbours.size() > 0){
+      //print(t + " - ");
+      //print(t.neigbours.get(0));
+      ArrayList<Edge> candidates = new ArrayList<Edge>();
+      candidates.add(t.e0);
+      candidates.add(t.e1);
+      candidates.add(t.e2);
+      for(int j = 0; j < t.neigbours.size(); j++){
+        for(int k = candidates.size()-1;k>=0;k--){
+         if(t.neigbours.get(j).isEdgeIn(candidates.get(k))){
+           candidates.remove(k);
+         }
+        }  
+      }
+      t.boarder = candidates;
+    }else{
+      t.boarder.add(t.e0);
+      t.boarder.add(t.e1);
+      t.boarder.add(t.e2);
+    }
   }
 }
 

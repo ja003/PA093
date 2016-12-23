@@ -1,8 +1,5 @@
 ArrayList<Point> points;
 Point selectedPoint;
-int WINDOW_SIZE_X = 1000;
-int WINDOW_SIZE_Y = 1000;
-
 boolean convexHull;
 ArrayList<Point> pointsHull;
 
@@ -11,28 +8,31 @@ boolean triangulation;
 boolean drawKdTree;
 boolean drawVoronoiDiagram;
 
+int WINDOW_SIZE_X = 500;
+int WINDOW_SIZE_Y = 500;
+
 void setup() {
-  WINDOW_SIZE_X = 1000;
-  WINDOW_SIZE_Y = 1000;
-  size(1000, 1000);
+  size(500, 500);
   noStroke();
   background(126);
   convexHull = true;
   points = new ArrayList<Point>();
-  int x = 100;
+  int x = 200;
   int c = 100;
   
-  /*points.add(new Point(x-c,x-c));
-  points.add(new Point(x+c,x-c));
-  points.add(new Point(x-c,x+c));
-  points.add(new Point(x+c,x+c));*/
+  points.add(new Point(x-c,x-c));
+  points.add(new Point(x+c/2,x-c));  
+  //points.add(new Point(x,x));
+  //points.add(new Point(x-c,x+c));
+  points.add(new Point(x+c,x+c));
   
-  points.add(new Point(0,0));
-  points.add(new Point(0,2*x));
-  points.add(new Point(x,2*x));
+  /*
+  points.add(new Point(x,3*x));
   points.add(new Point(x,x));
   points.add(new Point(2*x,x));
-  points.add(new Point(x,0));
+  points.add(new Point(2*x,2*x));
+  points.add(new Point(2*x,3*x));
+  points.add(new Point(3*x,2*x));*/
   
   /*points.add(new Point(2*x,x/2));
   //points.add(new Point(2*x,4*x));
