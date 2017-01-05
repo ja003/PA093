@@ -24,8 +24,11 @@ Point getRandomPoint(){
 
 void resetAll(){
  points.clear(); 
- triangulation = false;
+ drawTriangulation = false;
  drawKdTree = false;
+ drawGiftWrap = false;
+ drawGrahamScan = false;
+ drawVoronoiDiagram = false;
 }
 
 void drawEdges(ArrayList<Edge> edges){

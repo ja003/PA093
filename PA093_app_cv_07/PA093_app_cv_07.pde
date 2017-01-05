@@ -1,12 +1,15 @@
 ArrayList<Point> points;
 Point selectedPoint;
-boolean convexHull;
-ArrayList<Point> pointsHull;
 
-boolean delaunayTriangulationFlag;
-boolean triangulation;
+ArrayList<Point> pointsGiftWrap;
+ArrayList<Point> pointsGrahamScan;
+
+boolean drawDelaunayTriangulationFlag;
+boolean drawTriangulation;
 boolean drawKdTree;
 boolean drawVoronoiDiagram;
+boolean drawGiftWrap;
+boolean drawGrahamScan;
 
 int WINDOW_SIZE_X = 500;
 int WINDOW_SIZE_Y = 500;
@@ -15,64 +18,18 @@ void setup() {
   size(500, 500);
   noStroke();
   background(126);
-  convexHull = true;
   points = new ArrayList<Point>();
   int x = 200;
   int c = 100;
   
   points.add(new Point(x-c,x-c));
   points.add(new Point(x+c/2,x-c));  
-  //points.add(new Point(x,x));
-  //points.add(new Point(x-c,x+c));
+  points.add(new Point(x,x));
+  points.add(new Point(x-c,x+c));
   points.add(new Point(x+c,x+c));
   
-  /*
-  points.add(new Point(x,3*x));
-  points.add(new Point(x,x));
-  points.add(new Point(2*x,x));
-  points.add(new Point(2*x,2*x));
-  points.add(new Point(2*x,3*x));
-  points.add(new Point(3*x,2*x));*/
-  
-  /*points.add(new Point(2*x,x/2));
-  //points.add(new Point(2*x,4*x));
-  points.add(new Point(x,x));
-  //points.add(new Point(x,3*x));
-  points.add(new Point(2*x,3*x));
-  points.add(new Point(3*x,3*x));
-  points.add(new Point(3*x,x));
-  points.add(new Point(2*x,x));
-  
-  points.add(new Point(112,228));*/
-  
-  /*points.add(new Point(2*x,x+x/2));
-  points.add(new Point(2.5*x,2*x));
-  points.add(new Point(3*x,x));
-  points.add(new Point(3.5*x,1.7*x));
-  points.add(new Point(4*x,x));*/
-  
-  
-  
-  //points.add(new Point(x-50,x-100));
-  //points.add(new Point(x+100,x-100));
-  
-  //points.add(new Point(x-100,x+100));
-  //points.add(new Point(x+100,x+100));
-  
-  /*points.add(new Point(x-200,x-50));
-  points.add(new Point(x-150,x-100));
-  points.add(new Point(x-75,x-125));
-  points.add(new Point(x,x-100));
-  points.add(new Point(x+50,x));
-  points.add(new Point(x-100,x));*/
-  //points.add(new Point(x-80,x-250));
-  //points.add(new Point(x-90,x-50));
-  /*points.add(new Point(730,560));
-  points.add(new Point(400,436));
-  points.add(new Point(373,583));
-  points.add(new Point(415,479));
-  points.add(new Point(471,500));*/
-  pointsHull = new ArrayList<Point>(); 
+  pointsGiftWrap = new ArrayList<Point>(); 
+  pointsGrahamScan = new ArrayList<Point>(); 
 }
 
 void draw() {
@@ -83,13 +40,16 @@ void draw() {
     Point p = points.get(i);
     ellipse(p.x, p.y, 10,10);
   }
-  if(convexHull)
-    connectPointsWithLine(pointsHull, 5);
+  if(drawGiftWrap)
+    connectPointsWithLine(pointsGiftWrap, 5);
     
-  if(triangulation)
+  if(drawGrahamScan)
+    connectPointsWithLine(pointsGrahamScan, 5);
+    
+  if(drawTriangulation)
     drawLines(lineFrom, lineTo);
     
-  if(delaunayTriangulationFlag)
+  if(drawDelaunayTriangulationFlag)
     drawEdges(delaunayTriangulation);
     
   if(drawKdTree)
@@ -136,30 +96,33 @@ void keyPressed(){
    resetAll();
  }
  if(key == 'h'){
-   convexHull = true;
+   drawGiftWrap = !drawGiftWrap;
+   if(drawGiftWrap)
+     pointsGiftWrap = getGiftWrap(points);
  }
  
  if(key == 'c'){
-   //pointsHull = getGiftWrap(points);
-   pointsHull = getGrahamScan(points);
+   drawGrahamScan = !drawGrahamScan;
+   if(drawGrahamScan)
+     pointsGrahamScan = getGrahamScan(points);
  }
  if(key == 'd'){
-   delaunayTriangulationFlag = !delaunayTriangulationFlag;
-   triangulation = false;
+   drawDelaunayTriangulationFlag = !drawDelaunayTriangulationFlag;
+   drawTriangulation = false;
    print("delaunayTriangulation\n");
    getDelaunayTriangulation(points);
  }
  
  if(key == 't'){
-   triangulation = true;
-   delaunayTriangulationFlag = false;
+   drawTriangulation = !drawTriangulation;
+   drawDelaunayTriangulationFlag = false;
    print("triangulate\n");
    getTriangulation(points);
  }
  if(key == 'k'){
    print("kdTree\n");
    buildKdTreeFrom(points);
-   drawKdTree = true;
+   drawKdTree = !drawKdTree;
  }
  if(key == 'v'){
    print("voronoi\n");
