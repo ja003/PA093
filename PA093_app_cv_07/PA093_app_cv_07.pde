@@ -4,18 +4,18 @@ Point selectedPoint;
 ArrayList<Point> pointsGiftWrap;
 ArrayList<Point> pointsGrahamScan;
 
-boolean drawDelaunayTriangulationFlag;
+boolean drawDelaunayTriangulation;
 boolean drawTriangulation;
 boolean drawKdTree;
 boolean drawVoronoiDiagram;
 boolean drawGiftWrap;
 boolean drawGrahamScan;
 
-int WINDOW_SIZE_X = 500;
-int WINDOW_SIZE_Y = 500;
+int WINDOW_SIZE_X = 1000;
+int WINDOW_SIZE_Y = 1000;
 
 void setup() {
-  size(500, 500);
+  size(1000, 1000);
   noStroke();
   background(126);
   points = new ArrayList<Point>();
@@ -49,7 +49,7 @@ void draw() {
   if(drawTriangulation)
     drawLines(lineFrom, lineTo);
     
-  if(drawDelaunayTriangulationFlag)
+  if(drawDelaunayTriangulation)
     drawEdges(delaunayTriangulation);
     
   if(drawKdTree)
@@ -90,44 +90,59 @@ void mouseReleased() {
 
 void keyPressed(){
  if(key == 'g'){
-    points.add(getRandomPoint()); 
+    points.add(getRandomPoint());
+    print("Add random point\n"); 
  }
  if(key == 'r'){
    resetAll();
+   print("RESET\n"); 
  }
  if(key == 'h'){
    drawGiftWrap = !drawGiftWrap;
-   if(drawGiftWrap)
-     pointsGiftWrap = getGiftWrap(points);
+   if(drawGiftWrap){
+     pointsGiftWrap = getGiftWrap(points);      
+     print("GiftWrap\n"); 
+   }
  }
  
  if(key == 'c'){
    drawGrahamScan = !drawGrahamScan;
-   if(drawGrahamScan)
-     pointsGrahamScan = getGrahamScan(points);
+   if(drawGrahamScan){
+     pointsGrahamScan = getGrahamScan(points);     
+     print("GrahamScan\n");
+   }
  }
  if(key == 'd'){
-   drawDelaunayTriangulationFlag = !drawDelaunayTriangulationFlag;
+   drawDelaunayTriangulation = !drawDelaunayTriangulation;
    drawTriangulation = false;
-   print("delaunayTriangulation\n");
-   getDelaunayTriangulation(points);
+   if(drawDelaunayTriangulation){
+     print("delaunayTriangulation\n");
+     getDelaunayTriangulation(points);
+   }
  }
  
  if(key == 't'){
    drawTriangulation = !drawTriangulation;
-   drawDelaunayTriangulationFlag = false;
-   print("triangulate\n");
-   getTriangulation(points);
+   drawDelaunayTriangulation = false;
+   if(drawTriangulation){
+     print("triangulate\n");
+     getTriangulation(points);
+   }
  }
  if(key == 'k'){
-   print("kdTree\n");
-   buildKdTreeFrom(points);
+   
    drawKdTree = !drawKdTree;
+   if(drawKdTree){
+     print("kdTree\n");
+     buildKdTreeFrom(points);
+   }
  }
- if(key == 'v'){
-   print("voronoi\n");
-   CreateVoronoiDiagramFrom(getDelaunayTriangulation(points));
+ if(key == 'v'){   
    drawVoronoiDiagram = !drawVoronoiDiagram;
+   if(drawVoronoiDiagram){
+     print("voronoi\n");
+     CreateVoronoiDiagramFrom(getDelaunayTriangulation(points));  
+   }
  }
  
 }

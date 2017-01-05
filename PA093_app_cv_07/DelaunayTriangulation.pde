@@ -148,6 +148,6 @@ Point getCenterOfCircumCircle(Point p0, Point p1, Point p2){
     center.y = aux2/div;
  
     float radius = sqrt((center.x - p0.x)*(center.x - p0.x) + (center.y - p0.y)*(center.y - p0.y));
-    //print(" radius = " + radius);
+    //(" radius = " + radius);
     return center;
 }

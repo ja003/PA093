@@ -33,7 +33,7 @@ class Point{
     b2 = sign(this, v2, v3) < 0.0f;
     b3 = sign(this, v3, v1) < 0.0f;
     
-    print("\nP :" + this +" in " +t+" = " + ((b1 == b2) && (b2 == b3)));
+   //print("\nP :" + this +" in " +t+" = " + ((b1 == b2) && (b2 == b3)));
     
     return ((b1 == b2) && (b2 == b3));
   }
@@ -99,12 +99,12 @@ boolean hasIntersection(Edge edge)
       i_x = p0_x + (t * s1_x);
       i_y = p0_y + (t * s1_y);
       Point intersection = new Point(i_x, i_y);
-      print(" Int = " + intersection); 
+     //print(" Int = " + intersection); 
       if(intersection.equals(p0) || intersection.equals(p1))
         return false;        
       return true;
   }
-  print(" no col");
+ //print(" no col");
 
   return false; // No collision
 }

@@ -14,22 +14,22 @@ void getTriangulation(ArrayList<Point> pointsOrig){
   determineSides(points);
   sortPointsByX(points);
   
-  print("\npoints: ");
+  //print("\npoints: ");
   for(int i=0;i<points.size();i++){
-    print(points.get(i).toStringExtra()+",");
+    //print(points.get(i).toStringExtra()+",");
   } 
   
   ArrayList<Point> stack = new ArrayList<Point>();
   stack.add(points.get(0));
   stack.add(points.get(1));
-  print("\nstart");
+  //print("\nstart");
   for(int i = 2;i < points.size();i++){
     Point p = points.get(i);
     Point stackTop = stack.get(stack.size()-1);
-    print("\n-"+i+"-");
-    print("stack:");
+    //print("\n-"+i+"-");
+    //print("stack:");
     for(int j = 0;j< stack.size();j++){
-      print(stack.get(j) + ",");
+      //print(stack.get(j) + ",");
     }
     
     if(p.side == stackTop.side){
@@ -42,8 +42,8 @@ void getTriangulation(ArrayList<Point> pointsOrig){
          stack.get(j-1))){
            lineFrom.add(p);
            lineTo.add(stack.get(j-1));           
-           print("\nIF from:" +p+ "to "+stack.get(j-1));
-           print(" remove: "+stack.get(j));
+           //print("\nIF from:" +p+ "to "+stack.get(j-1));
+           //print(" remove: "+stack.get(j));
            stack.remove(j);
        }
      }  
@@ -51,7 +51,7 @@ void getTriangulation(ArrayList<Point> pointsOrig){
      for(int j = 0;j < stack.size();j++){
        lineFrom.add(p);
        lineTo.add(stack.get(j));
-       print("\nELSE from:" +p+ "to "+stack.get(j));
+       //print("\nELSE from:" +p+ "to "+stack.get(j));
      }
      stack.clear();
      stack.add(stackTop);     
@@ -61,7 +61,7 @@ void getTriangulation(ArrayList<Point> pointsOrig){
          p,
          stackTop, 
          stack.get(j))){
-           print(" remove: "+stack.get(j));
+           //print(" remove: "+stack.get(j));
        stack.remove(j);
        }
      }
@@ -70,21 +70,21 @@ void getTriangulation(ArrayList<Point> pointsOrig){
     
     stack.add(p);   
     /*
-    print("\nlines:\n");
+    //print("\nlines:\n");
     for(int j = 0;j< lineFrom.size();j++){
-      print(lineFrom.get(j)+"-"+lineTo.get(j) + "|\n");
+      //print(lineFrom.get(j)+"-"+lineTo.get(j) + "|\n");
     }*/
   }
   /*
   for(int i=0;i<lineFrom.size()-1;i++){
-   print("["+lineFrom.get(i)+" - "+lineTo.get(i)+"]\n"); 
+   //print("["+lineFrom.get(i)+" - "+lineTo.get(i)+"]\n"); 
   }*/
 }
 
 void addConvexHull(ArrayList<Point> points){
   ArrayList<Point> hull = getGrahamScan(points);
   for(int i=0;i<hull.size()-1;i++){
-    //print(hull.get(i)+",");
+    ////print(hull.get(i)+",");
     lineFrom.add(hull.get(i));
     lineTo.add(hull.get(i+1));
  }
@@ -105,11 +105,11 @@ boolean isWithinPolygon(Point pFrom,Point p2,Point p3){
 }
 
 void determineSides(ArrayList<Point> points){
-  print("points:\n");
+  //print("points:\n");
   for(int i=0;i<points.size();i++){
-   print(points.get(i)+","); 
+   //print(points.get(i)+","); 
   }
-  print("\n");
+  //print("\n");
   
   Point minX = new Point(6666,6666);
   int minXindex = 0;
@@ -119,19 +119,19 @@ void determineSides(ArrayList<Point> points){
       minXindex = i;
     }
   }
-  print("\nminI:"+minXindex);
+  //print("\nminI:"+minXindex);
   for(int i=0; i < minXindex;i++){
     Point tmp = points.get(0).clone();
-    print( " move "+tmp);
+    //print( " move "+tmp);
     points.remove(0);
     points.add(tmp);
   }
   minXindex = 0;  
-  print("\npoints:\n");
+  //print("\npoints:\n");
   for(int i=0;i<points.size();i++){
-   print(points.get(i)+","); 
+   //print(points.get(i)+","); 
   }
-  print("\n");
+  //print("\n");
   
   int maxXindex = 0;
   Point maxX = new Point(-6666,6666);
@@ -141,7 +141,7 @@ void determineSides(ArrayList<Point> points){
       maxXindex = i;
     }
   }
-  print("\nmaxI:"+maxXindex);
+  //print("\nmaxI:"+maxXindex);
   
   points.get(minXindex).side = Side.both;
   points.get(maxXindex).side = Side.both;
@@ -158,26 +158,9 @@ void determineSides(ArrayList<Point> points){
     points.get(i).side = s<0? Side.right:Side.left;
   }
   
-  print("sides:\n");
+  //print("sides:\n");
   for(int i=0;i<points.size();i++){
-   print(points.get(i)+","); 
+   //print(points.get(i)+","); 
   }
-  print("\n");
+  //print("\n");
 }
-/*
-void sortPointsByX(ArrayList<Point> points){
-  for(int i=0; i< points.size();i++){
-    for(int j=0; j< points.size()-1;j++){
-      //if(points.size() < 2)
-        //return;
-      Point p1 = points.get(j);
-      Point p2 = points.get(j+1);
-      if(p1.x > p2.x || (p1.x == p2.x && p1.y > p2.y)){
-        Point tmp = p1.clone();
-        //print("\nswapping: "+tmp+","+points.get(j+1));
-        points.set(j,points.get(j+1));
-        points.set(j+1,tmp);
-      }
-    }  
-  }
-}*/
